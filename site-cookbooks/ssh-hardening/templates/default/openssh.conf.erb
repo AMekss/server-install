@@ -1,0 +1,111 @@
+<% node['config_disclaimer'].to_s.split("\n").each do |l| %>
+# <%= l %>
+<% end %>
+#---
+
+# This is the ssh client system-wide configuration file. 
+# See ssh_config(5) for more information on any settings used. Comments will be added only to clarify why a configuration was chosen.
+# 
+# Created for OpenSSH v5.9
+
+# Basic configuration
+# ===================
+
+# Address family should always be limited to the active network configuration.
+AddressFamily <%= ((@node['network']['ipv6']['enable']) ? "any" : "inet" ) %>
+
+<% Array(@node['ssh']['remote_hosts']).each do |host| %>
+# Restrict the following configuration to be limited to this Host.
+Host <%= host %>
+<% end %>
+
+<% Array(@node['ssh']['ports']).each do |ssh_port| %>
+# The port at the destination should be defined
+Port <%= ssh_port %>
+<% end %>
+
+# Identity file configuration. You may restrict available identity files. Otherwise ssh will search for a pattern and use any that matches.
+#IdentityFile ~/.ssh/identity
+#IdentityFile ~/.ssh/id_rsa
+#IdentityFile ~/.ssh/id_dsa
+
+
+# Security configuration
+# ======================
+
+# Set the protocol version to 2 for security reasons. Disables legacy support.
+Protocol 2
+
+# Make sure passphrase querying is enabled
+BatchMode no
+
+# Prevent IP spoofing by checking to host IP against the `known_hosts` file.
+CheckHostIP yes
+
+# Always ask before adding keys to the `known_hosts` file. Do not set to `yes`.
+StrictHostKeyChecking ask
+
+# **Ciphers** -- If your clients don't support CTR (eg older versions), cbc will be added
+# CBC: is true if you want to connect with OpenSSL-base libraries
+# eg ruby Net::SSH::Transport::CipherFactory requires cbc-versions of the given openssh ciphers to work
+# -- see: (http://net-ssh.github.com/net-ssh/classes/Net/SSH/Transport/CipherFactory.html)
+# 
+<% if @cipher %>
+Ciphers <%= @cipher %>
+<% end %>
+
+# **Hash algorithms** -- Make sure not to use SHA1 for hashing, unless it is really necessary.
+# Weak HMAC is sometimes required if older package versions are used 
+# eg Ruby's Net::SSH at around 2.2.* doesn't support sha2 for hmac, so this will have to be set true in this case.
+# 
+<% if @mac %>
+MACs <%= @mac %>
+<% end %>
+
+# Alternative setting, if OpenSSH version is below v5.9
+#MACs hmac-ripemd160
+
+# **Key Exchange Algorithms** -- Make sure not to use SHA1 for kex, unless it is really necessary
+# Weak kex is sometimes required if older package versions are used
+# eg ruby's Net::SSH at around 2.2.* doesn't support sha2 for kex, so this will have to be set true in this case.
+# 
+<% if @kex %>
+KexAlgorithms <%= @kex %>
+<% end %>
+
+
+# Disable agent formwarding, since local agent could be accessed through forwarded connection.
+ForwardAgent no
+
+# Disable X11 forwarding, since local X11 display could be accessed through forwarded connection.
+ForwardX11 no
+
+# Never use host-based authentication. It can be exploited.
+HostbasedAuthentication no
+RhostsRSAAuthentication no
+
+# Enable RSA authentication via identity files.
+RSAAuthentication yes
+
+# Disable password-based authentication, it can allow for potentially easier brute-force attacks.
+PasswordAuthentication no
+
+# Only use GSSAPIAuthentication if implemented on the network.
+GSSAPIAuthentication no
+GSSAPIDelegateCredentials no
+
+# Disable tunneling
+Tunnel no
+
+# Disable local command execution.
+PermitLocalCommand no
+
+
+# Misc. configuration
+# ===================
+
+# Enable compression. More pressure on the CPU, less on the network.
+Compression yes
+
+#EscapeChar ~
+#VisualHostKey yes
