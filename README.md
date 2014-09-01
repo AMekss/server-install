@@ -34,6 +34,13 @@ Add server specification into nodes/{host}.json
     "recipe[ssh-hardening]",
     "recipe[os-hardening]"
   ],
+  "root_user": {
+    "name": "sysadmin name",
+    "password": "shadowed password for sysadmin user will be needed for sudo operations",
+    "authorized_keys": [
+      "list of public keys to be added during site install"
+    ]
+  },
   "user": {
     "name": "app user name",
     "password": "shadowed password for app user",
