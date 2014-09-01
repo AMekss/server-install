@@ -25,6 +25,11 @@ diptables_rule 'http' do
          '--proto tcp --dport 443' ]
 end
 
+# Allow established sessions to receive traffic
+diptables_rule 'turn-back traffic' do
+  rule '-m conntrack --ctstate ESTABLISHED,RELATED'
+end
+
 # Reject packets other than those explicitly allowed
 diptables_policy 'drop_by_default' do
   policy 'DROP'
