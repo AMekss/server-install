@@ -11,8 +11,8 @@ bash 'create sysadmin group' do
   code 'groupadd -f sysadmin'
 end
 
-create_site_user 'mekssart', '$1$c0CKc8t0$FziWGLaEuR65qVSZRrorm.', true
-create_site_user node[:user][:name], node[:user][:password]
+create_site_user node[:root_user], true
+create_site_user node[:user]
 
 # Allow SSH
 diptables_rule 'ssh' do
