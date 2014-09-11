@@ -16,7 +16,7 @@ bash 'create sysadmin group' do
 end
 
 create_site_user node[:root_user], true
-create_site_user node[:user]
+create_site_user node[:app_user]
 
 # Allow SSH
 diptables_rule 'ssh' do
