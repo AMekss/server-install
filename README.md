@@ -22,6 +22,7 @@ Add server specification into nodes/{host}.json
     "recipe[sudo]",
     "recipe[rbenv::default]",
     "recipe[rbenv::ruby_build]",
+    "recipe[rbenv::rbenv_vars]",
     "recipe[nodejs::nodejs_from_binary]",
     "recipe[nginx::source]",
     "recipe[redisio::install]",
@@ -34,6 +35,7 @@ Add server specification into nodes/{host}.json
     "recipe[ssh-hardening]",
     "recipe[os-hardening]"
   ],
+  "stage": "staging",
   "root_user": {
     "name": "sysadmin name",
     "password": "shadowed password for sysadmin user will be needed for sudo operations",
@@ -41,7 +43,7 @@ Add server specification into nodes/{host}.json
       "list of public keys to be added during site install"
     ]
   },
-  "user": {
+  "app_user": {
     "name": "app user name",
     "password": "shadowed password for app user",
     "authorized_keys": [
