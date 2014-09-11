@@ -1,10 +1,14 @@
 ::Chef::Recipe.send(:include, SiteInstallHelpers)
 
 # Ruby
-rbenv_ruby '2.1.2' do
+rb_version = '2.1.2'
+rbenv_ruby rb_version do
   global true
 end
 
+rbenv_gem 'bundler' do
+  ruby_version rb_version
+end
 # Users & groups
 bash 'create sysadmin group' do
   user 'root'
