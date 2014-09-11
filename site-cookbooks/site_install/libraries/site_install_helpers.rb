@@ -36,8 +36,7 @@ module SiteInstallHelpers
 
     bash 'create db for app user' do
       user "#{user_name}"
-      code "createdb -E UTF8 -e #{user_name}_#{stage}"
-      not_if "psql ${#{user_name}_#{stage}} -c '\q' 2>&1;"
+      code "psql postgres -tAc \"SELECT 1 FROM pg_database WHERE datname='#{user_name}_#{stage}'\" | grep -q 1 || createdb -E UTF8 -e #{user_name}_#{stage}"
     end
   end
 end
