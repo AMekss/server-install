@@ -27,4 +27,17 @@ module SiteInstallHelpers
       code "usermod -a -G sysadmin #{user[:name]}"
     end if sudoer
   end
+
+  def setup_database(user_name, stage)
+    bash 'create db user for app user' do
+      user 'postgres'
+      code "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='#{user_name}'\" | grep -q 1 || createuser -d -e -s -P -w #{user_name}"
+    end
+
+    bash 'create db for app user' do
+      user "#{user_name}"
+      code "createdb -E UTF8 -e #{user_name}_#{stage}"
+      not_if "psql ${#{user_name}_#{stage}} -c '\q' 2>&1;"
+    end
+  end
 end

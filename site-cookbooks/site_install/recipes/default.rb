@@ -54,3 +54,6 @@ end
 diptables_policy 'drop_by_default' do
   policy 'DROP'
 end
+
+# Setup database
+setup_database(node[:app_user][:name], node[:stage])
