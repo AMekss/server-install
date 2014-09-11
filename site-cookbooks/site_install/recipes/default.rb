@@ -1,3 +1,4 @@
+require 'securerandom'
 ::Chef::Recipe.send(:include, SiteInstallHelpers)
 
 # Ruby
@@ -9,6 +10,21 @@ end
 rbenv_gem 'bundler' do
   ruby_version rb_version
 end
+
+directory "/home/#{node[:app_user][:name]}/#{node[:stage]}" do
+  owner node[:app_user][:name]
+  group node[:app_user][:name]
+  action :create
+end
+
+template "/home/#{node[:app_user][:name]}/#{node[:stage]}/.rbenv-vars" do
+  owner node[:app_user][:name]
+  group node[:app_user][:name]
+  source 'rbenv-vars.erb'
+  mode 0700
+  action :create_if_missing
+end
+
 # Users & groups
 bash 'create sysadmin group' do
   user 'root'
