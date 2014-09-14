@@ -31,3 +31,6 @@ setup_firewall
 setup_database node[:app_user][:name], node[:stage]
 setup_nginx "#{node[:app_user][:name]}_#{node[:stage]}"
 setup_unicorn "#{node[:app_user][:name]}_#{node[:stage]}"
+
+setup_logrotate "#{node[:app_user][:name]}_#{node[:stage]}_application", "/home/#{node[:app_user][:name]}/#{node[:stage]}/*/shared/log/*.log"
+setup_logrotate "#{node[:app_user][:name]}_#{node[:stage]}_nginx", "/var/log/nginx/*.log"

@@ -110,6 +110,16 @@ module SiteInstallHelpers
       code "update-rc.d -f unicorn_#{site_name} defaults"
     end
   end
+
+  def setup_logrotate(name, path)
+    template "/etc/logrotate.d/#{name}" do
+      owner 'root'
+      group 'root'
+      helper(:log_path) { path }
+      source 'logrotate.conf.erb'
+      mode 0644
+      action :create
+    end
   end
 
 end
