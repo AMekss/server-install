@@ -104,6 +104,12 @@ module SiteInstallHelpers
       mode 0755
       action :create
     end
+
+    bash 'start unicorn on server restart' do
+      user 'root'
+      code "update-rc.d -f unicorn_#{site_name} defaults"
+    end
+  end
   end
 
 end

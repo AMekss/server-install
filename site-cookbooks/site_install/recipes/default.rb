@@ -28,6 +28,6 @@ create_site_user node[:app_user]
 
 setup_firewall
 
-setup_database(node[:app_user][:name], node[:stage])
-setup_nginx("#{node[:app_user][:name]}_#{node[:stage]}")
-setup_unicorn("#{node[:app_user][:name]}_#{node[:stage]}")
+setup_database node[:app_user][:name], node[:stage]
+setup_nginx "#{node[:app_user][:name]}_#{node[:stage]}"
+setup_unicorn "#{node[:app_user][:name]}_#{node[:stage]}"
