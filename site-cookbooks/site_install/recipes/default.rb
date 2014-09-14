@@ -1,15 +1,7 @@
 require 'securerandom'
 ::Chef::Recipe.send(:include, SiteInstallHelpers)
 
-# Ruby
-rb_version = '2.1.2'
-rbenv_ruby rb_version do
-  global true
-end
-
-rbenv_gem 'bundler' do
-  ruby_version rb_version
-end
+install_ruby '2.1.2'
 
 directory "/home/#{node[:app_user][:name]}/#{node[:stage]}" do
   owner node[:app_user][:name]
@@ -34,26 +26,7 @@ end
 create_site_user node[:root_user], true
 create_site_user node[:app_user]
 
-# Allow SSH
-diptables_rule 'ssh' do
-  rule '--proto tcp --dport 22'
-end
-
-# Allow HTTP, HTTPS
-diptables_rule 'http' do
-  rule [ '--proto tcp --dport 80',
-         '--proto tcp --dport 443' ]
-end
-
-# Allow established sessions to receive traffic
-diptables_rule 'turn-back traffic' do
-  rule '-m conntrack --ctstate ESTABLISHED,RELATED'
-end
-
-# Reject packets other than those explicitly allowed
-diptables_policy 'drop_by_default' do
-  policy 'DROP'
-end
+setup_firewall
 
 setup_database(node[:app_user][:name], node[:stage])
 setup_nginx("#{node[:app_user][:name]}_#{node[:stage]}")

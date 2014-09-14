@@ -1,4 +1,14 @@
 module SiteInstallHelpers
+  def install_ruby(rb_version)
+    rbenv_ruby rb_version do
+      global true
+    end
+
+    rbenv_gem 'bundler' do
+      ruby_version rb_version
+    end
+  end
+
   def create_site_user(user, sudoer=false)
     user user[:name] do
       password user[:password]
@@ -26,6 +36,29 @@ module SiteInstallHelpers
       user 'root'
       code "usermod -a -G sysadmin #{user[:name]}"
     end if sudoer
+  end
+
+  def setup_firewall
+    # Allow SSH
+    diptables_rule 'ssh' do
+      rule '--proto tcp --dport 22'
+    end
+
+    # Allow HTTP, HTTPS
+    diptables_rule 'http' do
+      rule [ '--proto tcp --dport 80',
+             '--proto tcp --dport 443' ]
+    end
+
+    # Allow established sessions to receive traffic
+    diptables_rule 'turn-back traffic' do
+      rule '-m conntrack --ctstate ESTABLISHED,RELATED'
+    end
+
+    # Reject packets other than those explicitly allowed
+    diptables_policy 'drop_by_default' do
+      policy 'DROP'
+    end
   end
 
   def setup_database(user_name, stage)
