@@ -39,4 +39,38 @@ module SiteInstallHelpers
       code "psql postgres -tAc \"SELECT 1 FROM pg_database WHERE datname='#{user_name}_#{stage}'\" | grep -q 1 || createdb -E UTF8 -e #{user_name}_#{stage}"
     end
   end
+
+  def setup_nginx(site_name)
+    bash 'clean nginx defaults' do
+      user 'root'
+      code 'rm /etc/nginx/sites-enabled/*'
+    end
+
+    template "/etc/nginx/sites-available/#{site_name}" do
+      owner 'root'
+      group 'root'
+      source 'nginx.conf.erb'
+      action :create
+    end
+
+    bash 'symlink site config' do
+      user 'root'
+      code "ln -nfs /etc/nginx/sites-available/#{site_name} /etc/nginx/sites-enabled/#{site_name}"
+    end
+
+    service 'nginx' do
+      action :restart
+    end
+  end
+
+  def setup_unicorn(site_name)
+    template "/etc/init.d/unicorn_#{site_name}" do
+      owner 'root'
+      group 'root'
+      source 'unicorn_init.sh.erb'
+      mode 0755
+      action :create
+    end
+  end
+
 end

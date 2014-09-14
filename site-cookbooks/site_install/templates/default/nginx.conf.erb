@@ -1,0 +1,49 @@
+upstream unicorn {
+  server unix:/tmp/unicorn.<%= "#{node[:app_user][:name]}.#{node[:stage]}" %>.sock fail_timeout=0;
+}
+
+server {
+  listen 80 default deferred;
+  root /home/<%= "#{node[:app_user][:name]}/#{node[:stage]}" %>/current/public;
+
+  location ^~ /assets/ {
+    gzip_static on;
+    expires max;
+    add_header Cache-Control public;
+  }
+
+  # Prevent clients from accessing hidden files (starting with a dot)
+  # This is particularly important if you store .htpasswd files in the site hierarchy
+  location ~* (?:^|/)\. {
+    deny all;
+  }
+
+  location = /robots.txt {
+    allow all;
+    access_log off;         # Do not log access. To save a I/O as well as CPU power.
+    log_not_found off;      # Disables messages in error_log about files not found on disk
+  }
+
+  # Prevent clients from accessing to backup/config/source files
+  location ~* (?:\.(?:bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist)|~)$ {
+    deny all;
+  }
+
+  try_files $uri/index.html $uri @unicorn;
+  location @unicorn {
+    gzip on;
+    add_header "Cache-Control" "no-transform";
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_pass http://unicorn;
+  }
+
+  charset utf-8;
+  error_page 500 502 503 504 /500.html;
+  client_max_body_size 4G;
+  keepalive_timeout 10;
+  server_tokens off;
+}
