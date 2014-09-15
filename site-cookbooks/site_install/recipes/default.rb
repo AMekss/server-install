@@ -1,6 +1,8 @@
 require 'securerandom'
 ::Chef::Recipe.send(:include, SiteInstallHelpers)
 
+install_ruby '2.1.2'
+
 # Users & groups
 bash 'create sysadmin group' do
   user 'root'
@@ -9,8 +11,6 @@ end
 
 create_site_user node[:root_user], true
 create_site_user node[:app_user]
-
-install_ruby '2.1.2'
 
 directory "/home/#{node[:app_user][:name]}/#{node[:stage]}" do
   owner node[:app_user][:name]
