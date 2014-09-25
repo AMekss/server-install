@@ -73,7 +73,7 @@ module SiteInstallHelpers
     end
   end
 
-  def setup_nginx(site_name)
+  def setup_nginx(site_name, nginx_user, site_group)
     bash 'clean nginx defaults' do
       user 'root'
       code 'rm /etc/nginx/sites-enabled/*'
@@ -89,6 +89,11 @@ module SiteInstallHelpers
     bash 'symlink site config' do
       user 'root'
       code "ln -nfs /etc/nginx/sites-available/#{site_name} /etc/nginx/sites-enabled/#{site_name}"
+    end
+
+    bash 'add rights' do
+      user 'root'
+      code "usermod -a -G #{site_group} #{nginx_user}"
     end
 
     service 'nginx' do

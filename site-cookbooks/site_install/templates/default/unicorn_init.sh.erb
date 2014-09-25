@@ -5,7 +5,7 @@ set -e
 TIMEOUT=${TIMEOUT-60}
 APP_ROOT=/home/<%= "#{node[:app_user][:name]}/#{node[:stage]}" %>/current
 PID=$APP_ROOT/tmp/pids/unicorn.pid
-CMD="cd $APP_ROOT; bundle exec unicorn -D -c $APP_ROOT/config/unicorn/<%= node[:stage] %>.rb -E <%= node[:stage] %>"
+CMD="cd $APP_ROOT && bundle exec unicorn -D -c $APP_ROOT/config/unicorn/<%= node[:stage] %>.rb -E <%= node[:stage] %>"
 AS_USER=<%= node[:app_user][:name] %>
 set -u
 
