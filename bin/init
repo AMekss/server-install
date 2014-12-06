@@ -8,7 +8,4 @@ host="${1:-vagrant@192.168.33.10}"
 # we remove (-R) the old host key from known_hosts
 ssh-keygen -R "${host#*@}" 2> /dev/null
 
-rm -rf cookbooks/ 2> /dev/null
-berks vendor cookbooks/
-
 knife solo prepare "${host}"

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -rf cookbooks/ 2> /dev/null
+berks vendor cookbooks/
