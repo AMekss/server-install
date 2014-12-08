@@ -1,2 +1,5 @@
 RAILS_ENV=<%= "#{node[:stage]}" %>
 RAILS_SECRET_KEY_BASE=<%= SecureRandom.hex(64) %>
+DEVISE_KEY=<%= SecureRandom.hex(64) %>
+GOOGLE_EMAIL=<%= "#{node[:google_auth][:email]}" %>
+GOOGLE_CLIENT_SECRET=<%= "#{node[:google_auth][:client_secret]}" %>
