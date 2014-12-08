@@ -64,7 +64,7 @@ module SiteInstallHelpers
   def setup_database(user_name, stage)
     bash 'create db user for app user' do
       user 'postgres'
-      code "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='#{user_name}'\" | grep -q 1 || createuser -d -e -s -P -w #{user_name}"
+      code "psql postgres -tAc \"SELECT 1 FROM pg_roles WHERE rolname='#{user_name}'\" | grep -q 1 || createuser -d -e -s -w #{user_name}"
     end
 
     bash 'create db for app user' do
