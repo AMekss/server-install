@@ -3,13 +3,6 @@ require 'securerandom'
 
 install_ruby '2.1.2'
 
-# Users & groups
-bash 'create sysadmin group' do
-  user 'root'
-  code 'groupadd -f sysadmin'
-end
-
-create_site_user node[:root_user], true
 create_site_user node[:app_user]
 
 directory "/home/#{node[:app_user][:name]}/#{node[:stage]}" do
@@ -25,8 +18,6 @@ template "/home/#{node[:app_user][:name]}/#{node[:stage]}/.rbenv-vars" do
   mode 0700
   action :create_if_missing
 end
-
-setup_firewall
 
 setup_database node[:app_user][:name], node[:stage]
 setup_nginx "#{node[:app_user][:name]}_#{node[:stage]}", node[:nginx][:user], node[:app_user][:name]
