@@ -55,6 +55,14 @@ module SiteInstallHelpers
       rule '-m conntrack --ctstate ESTABLISHED,RELATED'
     end
 
+    # Allow redis-server on localhost
+    diptables_rule 'redis server' do
+      rule [
+        '-i lo -p tcp -m tcp --dport 6379',
+        '-i lo -p udp -m udp --dport 6379'
+      ]
+    end
+
     # Reject packets other than those explicitly allowed
     diptables_policy 'drop_by_default' do
       policy 'DROP'
