@@ -12,9 +12,19 @@ server {
     add_header Cache-Control public;
   }
 
+  location ^~ /system/attachments/ {
+    expires max;
+    add_header Cache-Control public;
+  }
+
   # Prevent clients from accessing hidden files (starting with a dot)
   # This is particularly important if you store .htpasswd files in the site hierarchy
   location ~* (?:^|/)\. {
+    deny all;
+  }
+
+  # Prevent clients from checking php urls
+  location ~ \.php$ {
     deny all;
   }
 
